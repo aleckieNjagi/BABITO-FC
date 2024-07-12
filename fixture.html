@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Team - Fixtures and Results</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    nav {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    nav ul li a {
+        text-decoration: none;
+        color: #333;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f0f0f0;
+    }
+
+    nav ul li a:hover {
+        background-color: #ddd;
+    }
+
+    .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .match-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+    }
+
+    .match-item:last-child {
+        border-bottom: none;
+    }
+
+    .match-item img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .admin-actions {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .admin-actions button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .admin-actions button:hover {
+        background-color: #555;
+    }
+
+    #admin-panel {
+        display: none;
+        margin-top: 20px;
+    }
+
+    .back-home {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .back-home button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .back-home button:hover {
+        background-color: #555;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Fixtures and Results</h1>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="homepage.html">homepage</a></li>
+            <li><a href="about.html">about us</a></li>
+            <li><a href="news.html">news</a></li>
+            <li><a href="contact.html">contact us</a></li>
+        </ul>
+    </nav>
+
+    <!-- Upcoming Matches Section -->
+    <section id="upcoming-matches" class="section">
+        <h2>Schedule of Upcoming Matches</h2>
+        <div id="upcoming-matches-list"></div>
+    </section>
+
+    <!-- Past Matches Section -->
+    <section id="past-matches" class="section">
+        <h2>Results from Past Matches</h2>
+        <div id="past-matches-list"></div>
+    </section>
+
+    <!-- Match Reports Section -->
+    <section id="match-reports" class="section">
+        <h2>Match Reports or Summaries</h2>
+        <div id="match-reports-list"></div>
+    </section>
+
+    <!-- Admin Actions -->
+    <div class="admin-actions" id="admin-actions">
+        <button onclick="toggleAdminPanel()">Admin Login</button>
+    </div>
+
+    <!-- Admin Panel for Adding or Deleting Content -->
+    <div id="admin-panel">
+        <form id="add-content-form">
+            <input type="text" id="content-title" placeholder="Title" required><br><br>
+            <textarea id="content-description" placeholder="Description" rows="4" required></textarea><br><br>
+            <input type="file" id="content-image" accept="image/*" required><br><br>
+            <select id="content-type" required>
+                <option value="upcoming-match">Upcoming Match</option>
+                <option value="past-match">Past Match Result</option>
+                <option value="match-report">Match Report</option>
+            </select><br><br>
+            <button type="button" onclick="addContent()">Add Content</button>
+        </form>
+    </div>
+
+    
+</div>
+
+<script>
+    // Data arrays for upcoming matches, past matches, and match reports
+    let upcomingMatches = JSON.parse(localStorage.getItem('upcomingMatches')) || [];
+    let pastMatches = JSON.parse(localStorage.getItem('pastMatches')) || [];
+    let matchReports = JSON.parse(localStorage.getItem('matchReports')) || [];
+
+    // Function to save data to localStorage
+    function saveDataToLocalStorage() {
+        localStorage.setItem('upcomingMatches', JSON.stringify(upcomingMatches));
+        localStorage.setItem('pastMatches', JSON.stringify(pastMatches));
+        localStorage.setItem('matchReports', JSON.stringify(matchReports));
+    }
+
+    // Function to display upcoming matches
+    function displayUpcomingMatches() {
+        const upcomingMatchesContainer = document.getElementById("upcoming-matches-list");
+        let upcomingMatchesHtml = '';
+
+        upcomingMatches.forEach(item => {
+            upcomingMatchesHtml += `<div class="match-item">
+                                        <h3>${item.title}</h3>
+                                        <p>Date: ${item.date}</p>
+                                        <p>Location: ${item.location}</p>
+                                        <img src="${item.image}" alt="${item.title}">
+                                        ${getDeleteButton('upcoming-match', item.id)}
+                                    </div>`;
+        });
+
+        upcomingMatchesContainer.innerHTML = upcomingMatchesHtml;
+    }
+
+    // Function to display past matches
+    function displayPastMatches() {
+        const pastMatchesContainer = document.getElementById("past-matches-list");
+        let pastMatchesHtml = '';
+
+        pastMatches.forEach(item => {
+            pastMatchesHtml += `<div class="match-item">
+                                    <h3>${item.title}</h3>
+                                    <p>Date: ${item.date}</p>
+                                    <p>Location: ${item.location}</p>
+                                    <img src="${item.image}" alt="${item.title}">
+                                    ${getDeleteButton('past-match', item.id)}
+                                </div>`;
+        });
+
+        pastMatchesContainer.innerHTML = pastMatchesHtml;
+    }
+
+    // Function to display match reports
+    function displayMatchReports() {
+        const matchReportsContainer = document.getElementById("match-reports-list");
+        let matchReportsHtml = '';
+
+        matchReports.forEach(item => {
+            matchReportsHtml += `<div class="match-item">
+                                    <h3>${item.title}</h3>
+                                    <p>${item.summary}</p>
+                                    <img src="${item.image}" alt="${item.title}">
+                                    ${getDeleteButton('match-report', item.id)}
+                                </div>`;
+        });
+
+        matchReportsContainer.innerHTML = matchReportsHtml;
+    }
+
+    // Function to add new content (upcoming match, past match, or match report)
+    function addContent() {
+        const title = document.getElementById("content-title").value;
+        const description = document.getElementById("content-description").value;
+        const contentType = document.getElementById("content-type").value;
+        const fileInput = document.getElementById("content-image");
+
+        if (title && description && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageUrl = event.target.result;
+
+                const newContent = {
+                    id: Date.now(),
+                    title: title,
+                    date: new Date().toLocaleDateString(),
+                    location: "TBD",
+                    image: imageUrl,
+                    summary: description
+                };
+
+                switch (contentType) {
+                    case "upcoming-match":
+                        upcomingMatches.unshift(newContent);
+                        break;
+                    case "past-match":
+                        pastMatches.unshift(newContent);
+                        break;
+                    case "match-report":
+                        matchReports.unshift(newContent);
+                        break;
+                    default:
+                        break;
+                }
+
+                saveDataToLocalStorage();
+                displayUpcomingMatches();
+                displayPastMatches();
+                displayMatchReports();
+
+                document.getElementById("add-content-form").reset();
+                alert("Content added successfully!");
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("Please fill in all fields and select an image.");
+        }
+    }
+
+    // Function to delete content based on type and ID
+    function deleteContent(type, id) {
+        const confirmed = confirm("Are you sure you want to delete this item?");
+        if (confirmed) {
+            switch (type) {
+                case "upcoming-match":
+                    upcomingMatches = upcomingMatches.filter(item => item.id !== id);
+                    break;
+                case "past-match":
+                    pastMatches = pastMatches.filter(item => item.id !== id);
+                    break;
+                case "match-report":
+                    matchReports = matchReports.filter(item => item.id !== id);
+                    break;
+                default:
+                    break;
+            }
+
+            saveDataToLocalStorage();
+            displayUpcomingMatches();
+            displayPastMatches();
+            displayMatchReports();
+        }
+    }
+
+    // Function to generate delete button for admin
+    function getDeleteButton(type, id) {
+        return `<button onclick="authenticateAndDelete('${type}', ${id})">Delete</button>`;
+    }
+
+    // Function to authenticate admin before deletion
+    function authenticateAndDelete(type, id) {
+        const username = prompt("Enter admin username:");
+        const password = prompt("Enter admin password:");
+
+        // Replace with actual authentication logic here
+        if (username === "alex" && password === "bsc123") {
+            deleteContent(type, id);
+        } else {
+            alert("Authentication failed. You are not authorized to delete content.");
+        }
+    }
+
+    // Function to toggle admin panel visibility
+    function toggleAdminPanel() {
+        const adminActions = document.getElementById("admin-actions");
+        const adminPanel = document.getElementById("admin-panel");
+
+        const username = prompt("Enter admin username:");
+        const password = prompt("Enter admin password:");
+
+        // Replace with actual authentication logic here
+        if (username === "alex" && password === "bsc123") {
+            adminActions.style.display = "none";
+            adminPanel.style.display = "block";
+        } else {
+            alert("Authentication failed. You are not authorized to access the admin panel.");
+        }
+    }
+
+    // Function to show upcoming matches section and hide others
+    function showUpcomingMatches() {
+        document.getElementById("upcoming-matches").style.display = "block";
+        document.getElementById("past-matches").style.display = "none";
+        document.getElementById("match-reports").style.display = "none";
+    }
+
+    // Function to show past matches section and hide others
+    function showPastMatches() {
+        document.getElementById("upcoming-matches").style.display = "none";
+        document.getElementById("past-matches").style.display = "block";
+        document.getElementById("match-reports").style.display = "none";
+    }
+
+    // Function to show match reports section and hide others
+    function showMatchReports() {
+        document.getElementById("upcoming-matches").style.display = "none";
+        document.getElementById("past-matches").style.display = "none";
+        document.getElementById("match-reports").style.display = "block";
+    }
+
+    // Function to navigate back to home
+    function backHome() {
+        document.getElementById("upcoming-matches").style.display = "none";
+        document.getElementById("past-matches").style.display = "none";
+        document.getElementById("match-reports").style.display = "none";
+
+        const adminActions = document.getElementById("admin-actions");
+        adminActions.style.display = "block";
+    }
+
+    // Load initial content when the page is loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        displayUpcomingMatches();
+        displayPastMatches();
+        displayMatchReports();
+    });
+</script>
+
+</body>
+</html>
+

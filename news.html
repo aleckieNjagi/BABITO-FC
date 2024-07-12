@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Team News</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    .header {
+        background-color: #121314; /* Blue header */
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .header h1 {
+        margin: 0;
+    }
+    .nav {
+        background-color: #343a40; /* Dark navbar */
+        padding: 10px 0;
+        text-align: center;
+    }
+    .nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .nav a:hover {
+        background-color: #555;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff; /* White background */
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .admin-panel {
+        background-color: #f0f0f0; /* Light grey admin panel */
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .admin-panel input[type="password"] {
+        width: 200px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .admin-panel button {
+        padding: 10px 20px;
+        background-color: #28a745; /* Green button */
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .admin-panel button:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+    .news-section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    .transfers-news {
+        background-color: #f9f9f9; /* Light grey background for transfers news */
+    }
+    .general-news {
+        background-color: #ffeeba; /* Light yellow background for general news */
+    }
+    .news-section h2 {
+        padding: 10px;
+        margin-top: 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    .news-item {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #ffffff; /* White background for news item */
+    }
+    .news-item h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    .news-item p {
+        color: #666;
+    }
+    .news-item img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 10px 0;
+        border-radius: 4px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .news-item video {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 10px 0;
+        border-radius: 4px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .news-item .delete-btn {
+        padding: 5px 10px;
+        background-color: #dc3545; /* Red delete button */
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        float: right;
+    }
+    .news-item .delete-btn:hover {
+        background-color: #c82333; /* Darker red on hover */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .news-item .delete-btn {
+            float: none;
+            margin-top: 10px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <!-- Placeholder for team logo -->
+        <img src="logo.png" alt="Team Logo" width="150" height="auto">
+    </div>
+    <h1>Football Team News</h1>
+</div>
+
+<div class="nav">
+    <a href="homepage.html">Home</a>
+    <a href="about.html">about us</a>
+    <a href="media.html">Gallery</a>
+    <a href="fixture.html">Matches</a>
+    <a href="team.html">Players</a>
+    <a href="contact.html">Contact</a>
+</div>
+
+<div class="container">
+    <div class="admin-panel">
+        <input type="password" id="admin-password" placeholder="Admin Password">
+        <button id="admin-login">Login</button>
+    </div>
+
+    <!-- News Section - Transfers -->
+    <div class="news-section transfers-news" id="transfers-news">
+        <h2>Transfers News</h2>
+        <!-- News items will be dynamically added here -->
+    </div>
+
+    <!-- News Section - General -->
+    <div class="news-section general-news" id="general-news">
+        <h2>General News</h2>
+        <!-- News items will be dynamically added here -->
+    </div>
+
+    <!-- Add News Form -->
+    <div class="add-news" style="display: none;">
+        <h2>Add News</h2>
+        <label for="news-section">Select Section:</label>
+        <select id="news-section">
+            <option value="transfers-news">Transfers News</option>
+            <option value="general-news">General News</option>
+        </select>
+        <input type="text" id="news-title" placeholder="Title">
+        <textarea id="news-content" placeholder="Content"></textarea>
+        <input type="url" id="news-image-url" placeholder="Image URL">
+        <button id="add-news-btn">Add News</button>
+    </div>
+</div>
+
+<script>
+    // Admin login functionality
+    document.getElementById('admin-login').addEventListener('click', function() {
+        var password = document.getElementById('admin-password').value.trim();
+        if (password === 'adminpassword') {
+            enableAdminActions(); // Enable admin actions (delete buttons)
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
+    });
+
+    // Function to enable admin actions (delete buttons) and show add news form
+    function enableAdminActions() {
+        var deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(function(button) {
+            button.style.display = 'inline-block'; // Show delete buttons
+            button.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this news item?')) {
+                    this.closest('.news-item').remove(); // Remove news item
+                    saveNewsToLocalStorage(); // Update local storage after deleting
+                }
+            });
+        });
+
+        // Show add news form
+        document.querySelector('.add-news').style.display = 'block';
+    }
+
+    // Event listener for adding news
+    document.getElementById('add-news-btn').addEventListener('click', function() {
+        var sectionId = document.getElementById('news-section').value;
+        var title = document.getElementById('news-title').value.trim();
+        var content = document.getElementById('news-content').value.trim();
+        var imageUrl = document.getElementById('news-image-url').value.trim();
+
+        if (title && content) {
+            addNews(sectionId, title, content, imageUrl);
+            document.getElementById('news-title').value = '';
+            document.getElementById('news-content').value = '';
+            document.getElementById('news-image-url').value = '';
+        } else {
+            alert('Please enter title, content, and image URL.');
+        }
+    });
+
+    // Function to add news dynamically
+    function addNews(sectionId, title, content, imageUrl) {
+        var newsSection = document.getElementById(sectionId);
+        var newsItem = document.createElement('div');
+        newsItem.classList.add('news-item');
+
+        var deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.textContent = 'Delete';
+
+        var newsTitle = document.createElement('h3');
+        newsTitle.textContent = title;
+
+        var newsContent = document.createElement('p');
+        newsContent.textContent = content;
+
+        var newsImage = null;
+        if (imageUrl) {
+            newsImage = document.createElement('img');
+            newsImage.src = imageUrl;
+            newsImage.alt = title;
+        }
+
+        newsItem.appendChild(deleteBtn);
+        newsItem.appendChild(newsTitle);
+        newsItem.appendChild(newsContent);
+        if (newsImage) {
+            newsItem.appendChild(newsImage);
+        }
+
+        newsSection.appendChild(newsItem);
+        saveNewsToLocalStorage(); // Save news to local storage
+    }
+
+    // Function to save news to local storage
+    function saveNewsToLocalStorage() {
+        var newsSections = document.querySelectorAll('.news-section');
+        var newsData = [];
+
+        newsSections.forEach(function(section) {
+            var sectionName = section.querySelector('h2').textContent;
+            var newsItems = section.querySelectorAll('.news-item');
+
+            var sectionNews = {
+                section: sectionName,
+                news: []
+            };
+
+            newsItems.forEach(function(item) {
+                var title = item.querySelector('h3').textContent;
+                var content = item.querySelector('p').textContent;
+                var imageUrl = item.querySelector('img') ? item.querySelector('img').src : null;
+
+                sectionNews.news.push({
+                    title: title,
+                    content: content,
+                    imageUrl: imageUrl
+                });
+            });
+
+            newsData.push(sectionNews);
+        });
+
+        localStorage.setItem('footballTeamNews', JSON.stringify(newsData));
+    }
+
+    // Function to load news from local storage on page load
+    function loadNewsFromLocalStorage() {
+        var newsData = JSON.parse(localStorage.getItem('footballTeamNews'));
+
+        if (newsData) {
+            newsData.forEach(function(section) {
+                var sectionId = section.section.toLowerCase().replace(' ', '-');
+                var sectionElement = document.getElementById(sectionId);
+
+                if (sectionElement) {
+                    section.news.forEach(function(newsItem) {
+                        addNews(sectionId, newsItem.title, newsItem.content, newsItem.imageUrl);
+                    });
+                }
+            });
+        }
+    }
+
+    // Load news from local storage when the page loads
+    window.addEventListener('load', function() {
+        loadNewsFromLocalStorage();
+    });
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

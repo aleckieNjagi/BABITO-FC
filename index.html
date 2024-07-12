@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Team</title>
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+            padding: 0;
+        }
+
+        header .logo {
+            max-width: 100px; /* Adjust max-width to fit your logo size */
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        header nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        header nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        header nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #intro {
+            background-color: #f0f0f0; /* Light gray */
+        }
+
+        #news {
+            background-color: #e1f5fe; /* Light blue */
+        }
+
+        #highlights {
+            background-color: #ffd54f; /* Amber */
+        }
+
+        #admin-container {
+            display: none; /* Initially hide admin container */
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        #admin-container.visible {
+            display: block; /* Show admin container when authenticated */
+        }
+
+        #admin-form-news,
+        #admin-form-highlights {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #admin-form-news input[type="text"],
+        #admin-form-highlights input[type="text"],
+        #admin-form-news input[type="date"],
+        #admin-form-highlights input[type="date"],
+        #admin-form-news textarea,
+        #admin-form-highlights button {
+            padding: 8px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        #admin-form-news button,
+        #admin-form-highlights button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #admin-form-news button:hover,
+        #admin-form-highlights button:hover {
+            background-color: #555;
+        }
+
+        .news-item,
+        .match-highlight {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            position: relative; /* Ensure relative positioning for delete button */
+        }
+
+        .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ccc;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #999;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(0, 0, 0, 0.8); /* Transparent black */
+            color: #fff;
+            position: relative;
+            width: 100%;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        @media screen and (max-width: 768px) {
+            header .logo {
+                display: block;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            header nav ul {
+                text-align: center;
+                margin-top: 10px;
+            }
+
+            header nav ul li {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="logo.png" alt="Football Team Logo" class="logo">
+            <h1>BABITO FOOTBALL CLUB</h1>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About us</a></li>
+                    <li><a href="fixture.html">fixtures</a></li>
+                    <li><a href="news.html">Team News</a></li>
+                    <li><a href="media.html">gallery</a></li>
+                    <li><a href="team.html">team squad</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="intro">
+        <div class="container">
+            <h2>Welcome to BABITO FC official website. Learn about our history, achievements, and upcoming matches.</h2>
+        <img src="team.jpg">
+        </div>
+    </section>
+
+    <section id="news">
+        <div class="container">
+            <h2>Latest News and Updates</h2>
+            <div id="news-items">
+                <!-- News articles dynamically loaded via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section id="highlights">
+        <div class="container">
+            <h2>Highlights of Recent Matches</h2>
+            <div id="match-highlights">
+                <!-- Match highlights dynamically loaded via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <button onclick="authenticateAdmin()">Admin Login</button>
+        </div>
+    </section>
+
+    <section id="admin-container">
+        <div class="container">
+            <h2>Admin Panel</h2>
+            <form id="admin-form-news">
+                <input type="text" id="news-title" placeholder="News Title" required>
+                <textarea id="news-content" placeholder="News Content" rows="3" required></textarea>
+                <input type="date" id="news-date" required>
+                <button type="button" onclick="addNews()">Add News</button>
+            </form>
+            <form id="admin-form-highlights">
+                <input type="text" id="highlights-opponent" placeholder="Opponent" required>
+                <input type="text" id="highlights-result" placeholder="Result" required>
+                <input type="date" id="highlights-date" required>
+                <button type="button" onclick="addHighlights()">Add Highlights</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 BABITO SC. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simulated data for news and match highlights
+        let newsData = JSON.parse(localStorage.getItem('newsData')) || [
+            { id: 1, title: "New Sponsorship Deal Signed", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel enim sit amet purus pretium." },
+            { id: 2, title: "Player Injury Update", content: "Sed tempus velit at risus faucibus, sed fermentum lorem tristique." },
+            { id: 3, title: "Upcoming Match Announcement", content: "Pellentesque vitae arcu a purus luctus dignissim nec sit amet dolor." }
+        ];
+
+        let matchHighlights = JSON.parse(localStorage.getItem('matchHighlights')) || [
+            { id: 1, opponent: "Team A", result: "Won 3-1", date: "July 5, 2024" },
+            { id: 2, opponent: "Team B", result: "Lost 2-0", date: "June 28, 2024" },
+            { id: 3, opponent: "Team C", result: "Drew 2-2", date: "June 20, 2024" }
+        ];
+
+        // Function to save news and match highlights to localStorage
+        function saveDataToLocalStorage() {
+            localStorage.setItem('newsData', JSON.stringify(newsData));
+            localStorage.setItem('matchHighlights', JSON.stringify(matchHighlights));
+        }
+
+        // Function to display news items dynamically
+        function displayNews() {
+            const newsItemsContainer = document.getElementById("news-items");
+            let newsHtml = '';
+
+            newsData.forEach(item => {
+                newsHtml += `<div class="news-item" id="news-${item.id}">
+                                <h3>${item.title}</h3>
+                                <p>${item.content}</p>
+                                ${isAdminAuthenticated() ? `<button class="delete-button" onclick="deleteNews(${item.id})">Delete</button>` : ''}
+                            </div>`;
+            });
+
+            newsItemsContainer.innerHTML = newsHtml;
+        }
+
+        // Function to display match highlights dynamically
+        function displayMatchHighlights() {
+            const matchHighlightsContainer = document.getElementById("match-highlights");
+            let highlightsHtml = '';
+
+            matchHighlights.forEach(match => {
+                highlightsHtml += `<div class="match-highlight" id="highlight-${match.id}">
+                                        <p><strong>${match.opponent}</strong> - ${match.result}</p>
+                                        <p>Date: ${match.date}</p>
+                                        ${isAdminAuthenticated() ? `<button class="delete-button" onclick="deleteHighlight(${match.id})">Delete</button>` : ''}
+                                    </div>`;
+            });
+
+            matchHighlightsContainer.innerHTML = highlightsHtml;
+        }
+
+        // Function to add news dynamically
+        function addNews() {
+            const newsTitle = document.getElementById("news-title").value;
+            const newsContent = document.getElementById("news-content").value;
+            const newsDate = document.getElementById("news-date").value;
+
+            if (newsTitle && newsContent && newsDate) {
+                const newNews = {
+                    id: Date.now(),
+                    title: newsTitle,
+                    content: newsContent
+                };
+
+                newsData.unshift(newNews);
+                saveDataToLocalStorage();
+                displayNews();
+                document.getElementById("admin-form-news").reset();
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Function to add match highlights dynamically
+        function addHighlights() {
+            const highlightsOpponent = document.getElementById("highlights-opponent").value;
+            const highlightsResult = document.getElementById("highlights-result").value;
+            const highlightsDate = document.getElementById("highlights-date").value;
+
+            if (highlightsOpponent && highlightsResult && highlightsDate) {
+                const newHighlight = {
+                    id: Date.now(),
+                    opponent: highlightsOpponent,
+                    result: highlightsResult,
+                    date: highlightsDate
+                };
+
+                matchHighlights.unshift(newHighlight);
+                saveDataToLocalStorage();
+                displayMatchHighlights();
+                document.getElementById("admin-form-highlights").reset();
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Function to delete news by ID
+        function deleteNews(id) {
+            newsData = newsData.filter(item => item.id !== id);
+            saveDataToLocalStorage();
+            displayNews();
+        }
+
+        // Function to delete match highlight by ID
+        function deleteHighlight(id) {
+            matchHighlights = matchHighlights.filter(item => item.id !== id);
+            saveDataToLocalStorage();
+            displayMatchHighlights();
+        }
+
+        // Function to authenticate admin
+        function authenticateAdmin() {
+            const username = prompt("Enter admin username:");
+            const password = prompt("Enter admin password:");
+
+            // Replace with actual authentication logic here
+            if (username === "alex" && password === "bsc123") {
+                document.getElementById("admin-container").classList.add("visible");
+                displayNews();
+                displayMatchHighlights();
+            } else {
+                alert("Authentication failed. Please try again.");
+            }
+        }
+
+        // Function to check if admin is authenticated
+        function isAdminAuthenticated() {
+            return document.getElementById("admin-container").classList.contains("visible");
+        }
+
+        // Load initial content when the page is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            displayNews();
+            displayMatchHighlights();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

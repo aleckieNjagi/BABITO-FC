@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Team Gallery</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    .header {
+        background-color: #0e0e0f;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo img {
+        max-width: 150px;
+        height: auto;
+    }
+    h1 {
+        text-align: center;
+        margin: 0 0 20px;
+    }
+    .nav {
+        background-color: #f8f9fa;
+        padding: 10px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .nav a {
+        color: #007bff;
+        text-decoration: none;
+        padding: 0 10px;
+        font-size: 18px;
+    }
+    .nav a:hover {
+        color: #0056b3;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .admin-panel {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .admin-panel input[type="password"] {
+        width: 200px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .admin-panel button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .admin-panel button:hover {
+        background-color: #218838;
+    }
+    .add-content {
+        margin-top: 20px;
+        text-align: center;
+        display: none; /* Initially hidden */
+    }
+    .add-content select, 
+    .add-content input[type="text"], 
+    .add-content input[type="url"] {
+        width: calc(100% - 22px);
+        max-width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .add-content button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .add-content button:hover {
+        background-color: #0056b3;
+    }
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .content-item {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .content-item h3 {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        margin: 0;
+        text-align: center;
+        font-size: 18px;
+    }
+    .content-item p, 
+    .content-item img, 
+    .content-item video {
+        width: 100%;
+        display: block;
+    }
+    .content-item .interactions {
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f0f0f0;
+    }
+    .content-item .interactions button {
+        padding: 5px 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .content-item .interactions button:hover {
+        background-color: #218838;
+    }
+    .comments-list {
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #ccc;
+    }
+    .comments-list .comment {
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+    }
+    .comments-list .comment p {
+        margin: 5px 0;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <img src="logo.png" alt="Team Logo">
+    </div>
+    <h1>Football Team Gallery</h1>
+</div>
+
+<div class="nav">
+    <a href="homepage.html">Homepage</a>
+    <a href="fixture.html">fixtures</a>
+</div>
+
+<div class="container">
+    <div class="admin-panel">
+        <input type="password" id="admin-password" placeholder="Admin Password">
+        <button id="admin-login">Login</button>
+    </div>
+
+    <div class="add-content" id="add-content">
+        <select id="content-type">
+            <option value="text">Text</option>
+            <option value="image">Image URL</option>
+            <option value="video">Video URL</option>
+        </select>
+        <br>
+        <input type="text" id="content-title" placeholder="Title">
+        <br>
+        <input type="url" id="content-url" placeholder="Content URL">
+        <br>
+        <button id="add-content-btn">Add Content</button>
+    </div>
+
+    <div class="gallery" id="gallery">
+        <!-- Content items will be dynamically added here -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var isAdmin = false;
+
+        // Admin Login functionality
+        $('#admin-login').click(function() {
+            var password = $('#admin-password').val().trim();
+            if (password === 'adminpassword') {
+                isAdmin = true;
+                $('.admin-panel').hide();
+                $('.add-content').show();
+                loadContentFromLocalStorage(); // Load existing content on login
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        });
+
+        // Add Content button click handler
+        $('#add-content-btn').click(function() {
+            if (isAdmin) {
+                var contentType = $('#content-type').val();
+                var title = $('#content-title').val().trim();
+                var url = $('#content-url').val().trim();
+
+                if (title && url) {
+                    addContent(contentType, title, url);
+                    $('#content-title').val('');
+                    $('#content-url').val('');
+                    saveContentToLocalStorage(); // Save content to local storage after addition
+                } else {
+                    alert('Please enter both title and URL.');
+                }
+            } else {
+                alert('You need to login as admin to add content.');
+            }
+        });
+
+        // Event delegation for Delete Content button (only for admin)
+        $('.gallery').on('click', '.delete-btn', function() {
+            if (isAdmin) {
+                $(this).closest('.content-item').remove();
+                saveContentToLocalStorage();
+            } else {
+                alert('Only admin can delete content items.');
+            }
+        });
+
+        // Like button functionality
+        $('.gallery').on('click', '.like-btn', function() {
+            var $contentItem = $(this).closest('.content-item');
+            var likes = parseInt($contentItem.data('likes')) || 0;
+            likes++;
+            $contentItem.data('likes', likes);
+            displayLikes($contentItem);
+            saveContentToLocalStorage();
+        });
+
+        // Comment button functionality
+        $('.gallery').on('click', '.comment-btn', function() {
+            var $contentItem = $(this).closest('.content-item');
+            var username = prompt('Enter your username:');
+            if (username) {
+                var comment = prompt('Enter your comment:');
+                if (comment) {
+                    var comments = $contentItem.data('comments') || [];
+                    comments.push({ username: username, comment: comment });
+                    $contentItem.data('comments', comments);
+                    displayComments($contentItem, comments);
+                    saveContentToLocalStorage();
+                }
+            }
+        });
+
+        // Load existing content from local storage on page load
+        loadContentFromLocalStorage(); // Initial load
+
+        // Save content to local storage
+        function saveContentToLocalStorage() {
+            var contentItems = [];
+
+            $('.gallery .content-item').each(function() {
+                var type = $(this).data('type');
+                var title = $(this).find('h3').text();
+                var url = type === 'text' ? $(this).find('p').text() : $(this).find('img, video').attr('src');
+                var likes = $(this).data('likes') || 0;
+                var comments = $(this).data('comments') || [];
+
+                contentItems.push({
+                    type: type,
+                    title: title,
+                    url: url,
+                    likes: likes,
+                    comments: comments
+                });
+            });
+
+            localStorage.setItem('footballTeamGallery', JSON.stringify(contentItems));
+        }
+
+        // Load content from local storage
+        function loadContentFromLocalStorage() {
+            var storedContent = JSON.parse(localStorage.getItem('footballTeamGallery')) || [];
+            storedContent.forEach(function(item) {
+                addContent(item.type, item.title, item.url, item.likes, item.comments);
+            });
+        }
+
+        // Add content item to the gallery
+        function addContent(type, title, url, likes = 0, comments = []) {
+            var contentItem = $('<div class="content-item"></div>').data('type', type);
+            contentItem.append('<h3>' + title + '</h3>');
+
+            if (type === 'text') {
+                contentItem.append('<p>' + url + '</p>');
+            } else if (type === 'image') {
+                contentItem.append('<img src="' + url + '" alt="' + title + '">');
+            } else if (type === 'video') {
+                contentItem.append('<video controls><source src="' + url + '" type="video/mp4">Your browser does not support the video tag.</video>');
+            }
+
+            contentItem.append('<div class="interactions"><button class="like-btn">Like (' + likes + ')</button><button class="comment-btn">Comment</button><button class="delete-btn">Delete</button></div>');
+            contentItem.append('<div class="comments-list"></div>');
+
+            contentItem.data('likes', likes);
+            contentItem.data('comments', comments);
+
+            $('#gallery').append(contentItem);
+            displayLikes(contentItem);
+            displayComments(contentItem, comments);
+        }
+
+        // Display likes
+        function displayLikes($contentItem) {
+            var likes = $contentItem.data('likes') || 0;
+            $contentItem.find('.like-btn').text('Like (' + likes + ')');
+        }
+
+        // Display comments
+        function displayComments($contentItem, comments) {
+            var commentsList = '';
+            comments.forEach(function(comment) {
+                commentsList += '<div class="comment"><p><strong>' + comment.username + ':</strong> ' + comment.comment + '</p></div>';
+            });
+            $contentItem.find('.comments-list').html(commentsList);
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

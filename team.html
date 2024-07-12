@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Squad - Football Club</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    header {
+        background-color: #0b0b0b;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    header h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: inline;
+        margin-right: 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2em;
+    }
+
+    nav ul li a.active {
+        font-weight: bold;
+    }
+
+    main {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        margin-bottom: 15px;
+        font-size: 1.8em;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    .admin-panel {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .admin-panel input[type="password"] {
+        width: 200px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    .admin-panel button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .admin-panel button:hover {
+        background-color: #218838;
+    }
+
+    .add-content {
+        margin-top: 20px;
+        text-align: center;
+        display: none; /* Initially hidden */
+    }
+
+    .add-content input[type="text"], 
+    .add-content input[type="number"], 
+    .add-content input[type="url"],
+    .add-content textarea {
+        width: calc(100% - 22px);
+        max-width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    .add-content button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .add-content button:hover {
+        background-color: #0056b3;
+    }
+
+    .player {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .player img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+
+    .player h3 {
+        margin-bottom: 5px;
+        font-size: 1.6em;
+    }
+
+    .player p {
+        margin-bottom: 10px;
+    }
+
+    .player .btn-container {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .player .delete-btn {
+        padding: 8px 16px;
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .player .delete-btn:hover {
+        background-color: #c82333;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Team Squad</h1>
+        <nav>
+            <ul>
+                <li><a href="homepage.html">Home</a></li>
+                <li><a href="fixture.html">fixtures</a></li>
+                <li><a href="news.html">news</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section id="players">
+        <h2>Players</h2>
+        <div id="player-list"></div>
+        <div id="admin-section" class="admin-panel">
+            <input type="password" id="admin-password" placeholder="Admin Password">
+            <button id="admin-login">Login</button>
+        </div>
+        <div class="add-content" id="add-player-form">
+            <h3>Add Player</h3>
+            <input type="text" id="player-name" placeholder="Player Name">
+            <input type="text" id="player-position" placeholder="Position">
+            <input type="number" id="player-number" placeholder="Number">
+            <input type="text" id="player-nationality" placeholder="Nationality">
+            <input type="url" id="player-image-url" placeholder="Image URL">
+            <textarea id="player-bio" placeholder="Bio"></textarea>
+            <button id="add-player-btn">Add Player</button>
+        </div>
+    </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sample initial players data (to simulate persistence)
+    let players = [
+        {
+            name: "John Doe",
+            position: "Forward",
+            number: 10,
+            nationality: "Country",
+            image: "player1.jpg",
+            bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        {
+            name: "Jane Smith",
+            position: "Goalkeeper",
+            number: 1,
+            nationality: "Country",
+            image: "player2.jpg",
+            bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+    ];
+
+    // Check if admin is authenticated
+    let isAdmin = false;
+
+    // Load existing players
+    loadPlayers();
+
+    // Display players on page load
+    displayPlayers();
+
+    // Admin login functionality
+    document.getElementById('admin-login').addEventListener('click', function() {
+        let password = document.getElementById('admin-password').value.trim();
+        if (password === 'adminpassword') {
+            isAdmin = true;
+            document.querySelector('.admin-panel').style.display = 'none';
+            document.getElementById('add-player-form').style.display = 'block';
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
+    });
+
+    // Add player functionality
+    document.getElementById('add-player-btn').addEventListener('click', function() {
+        if (isAdmin) {
+            let playerName = document.getElementById('player-name').value.trim();
+            let playerPosition = document.getElementById('player-position').value.trim();
+            let playerNumber = document.getElementById('player-number').value.trim();
+            let playerNationality = document.getElementById('player-nationality').value.trim();
+            let playerImageUrl = document.getElementById('player-image-url').value.trim();
+            let playerBio = document.getElementById('player-bio').value.trim();
+
+            if (playerName && playerPosition && playerNumber && playerNationality && playerImageUrl && playerBio) {
+                let newPlayer = {
+                    name: playerName,
+                    position: playerPosition,
+                    number: playerNumber,
+                    nationality: playerNationality,
+                    image: playerImageUrl,
+                    bio: playerBio
+                };
+
+                players.push(newPlayer);
+                savePlayers();
+                displayPlayers();
+
+                // Clear input fields after adding player
+                document.getElementById('player-name').value = '';
+                document.getElementById('player-position').value = '';
+                document.getElementById('player-number').value = '';
+                document.getElementById('player-nationality').value = '';
+                document.getElementById('player-image-url').value = '';
+                document.getElementById('player-bio').value = '';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        } else {
+            alert('Admin authentication required.');
+        }
+    });
+
+    // Delete player functionality
+    document.getElementById('player-list').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-btn')) {
+            if (isAdmin) {
+                let playerName = event.target.dataset.playerName;
+                players = players.filter(player => player.name !== playerName);
+                savePlayers();
+                displayPlayers();
+            } else {
+                alert('Admin authentication required.');
+            }
+        }
+    });
+
+    // Function to display players
+    function displayPlayers() {
+        let playerList = document.getElementById('player-list');
+        playerList.innerHTML = '';
+
+        players.forEach(function(player) {
+            let playerDiv = document.createElement('div');
+            playerDiv.classList.add('player');
+
+            playerDiv.innerHTML = `
+                <img src="${player.image}" alt="${player.name}">
+                <h3>${player.name}</h3>
+                <p><strong>Position:</strong> ${player.position}</p>
+                <p><strong>Number:</strong> ${player.number}</p>
+                <p><strong>Nationality:</strong> ${player.nationality}</p>
+                <p>${player.bio}</p>
+                <div class="btn-container">
+                    <button class="delete-btn" data-player-name="${player.name}">Delete Player</button>
+                </div>
+            `;
+
+            playerList.appendChild(playerDiv);
+        });
+    }
+
+    // Function to save players to local storage
+    function savePlayers() {
+        localStorage.setItem('footballTeamPlayers', JSON.stringify(players));
+    }
+
+    // Function to load players from local storage
+    function loadPlayers() {
+        let storedPlayers = localStorage.getItem('footballTeamPlayers');
+        if (storedPlayers) {
+            players = JSON.parse(storedPlayers);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
+
